@@ -1,0 +1,169 @@
+Started by user ANANTHAKUMAR
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in C:\ProgramData\Jenkins\.jenkins\workspace\proj1
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (SCM)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+ > git.exe rev-parse --resolve-git-dir C:\ProgramData\Jenkins\.jenkins\workspace\proj1\.git # timeout=10
+Fetching changes from the remote Git repository
+ > git.exe config remote.origin.url https://github.com/Ananths1501/app.git # timeout=10
+Fetching upstream changes from https://github.com/Ananths1501/app.git
+ > git.exe --version # timeout=10
+ > git --version # 'git version 2.47.0.windows.2'
+ > git.exe fetch --tags --force --progress -- https://github.com/Ananths1501/app.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git.exe rev-parse "refs/remotes/origin/main^{commit}" # timeout=10
+Checking out Revision 4f1592ed9f7d5cce8a9168a6ea2db30b2e1ff73c (refs/remotes/origin/main)
+ > git.exe config core.sparsecheckout # timeout=10
+ > git.exe checkout -f 4f1592ed9f7d5cce8a9168a6ea2db30b2e1ff73c # timeout=10
+ > git.exe branch -a -v --no-abbrev # timeout=10
+ > git.exe branch -D main # timeout=10
+ > git.exe checkout -b main 4f1592ed9f7d5cce8a9168a6ea2db30b2e1ff73c # timeout=10
+Commit message: "added var/jar files"
+ > git.exe rev-list --no-walk 4f1592ed9f7d5cce8a9168a6ea2db30b2e1ff73c # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] bat
+
+C:\ProgramData\Jenkins\.jenkins\workspace\proj1>mvn clean package 
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< com.mycompany.app:my-app >----------------------
+[INFO] Building my-app Maven Webapp 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.1.0:clean (default-clean) @ my-app ---
+[INFO] Deleting C:\ProgramData\Jenkins\.jenkins\workspace\proj1\target
+[INFO] 
+[INFO] --- resources:3.0.2:resources (default-resources) @ my-app ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\ProgramData\Jenkins\.jenkins\workspace\proj1\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.8.0:compile (default-compile) @ my-app ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- resources:3.0.2:testResources (default-testResources) @ my-app ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\ProgramData\Jenkins\.jenkins\workspace\proj1\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.8.0:testCompile (default-testCompile) @ my-app ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:2.22.1:test (default-test) @ my-app ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- war:3.2.2:war (default-war) @ my-app ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [my-app] in [C:\ProgramData\Jenkins\.jenkins\workspace\proj1\target\my-app]
+[INFO] Processing war project
+[INFO] Copying webapp resources [C:\ProgramData\Jenkins\.jenkins\workspace\proj1\src\main\webapp]
+[INFO] Webapp assembled in [45 msecs]
+[INFO] Building war: C:\ProgramData\Jenkins\.jenkins\workspace\proj1\target\my-app.war
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.184 s
+[INFO] Finished at: 2025-03-19T09:18:59+05:30
+[INFO] ------------------------------------------------------------------------
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Image)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] bat
+
+C:\ProgramData\Jenkins\.jenkins\workspace\proj1>docker build -t ananth1501/simpleapplication . 
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 111B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/tomcat:9
+#2 DONE 3.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B 0.0s done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 2.25kB 0.1s done
+#4 DONE 0.1s
+
+#5 [1/2] FROM docker.io/library/tomcat:9@sha256:8299f3e2f559f57c683a38ff903b0caff1d789a2932686d30422f9dcd99c130e
+#5 CACHED
+
+#6 [2/2] COPY **/*.war /usr/local/tomcat/webapps/maven-web-app.war
+#6 DONE 0.1s
+
+#7 exporting to image
+#7 exporting layers 0.1s done
+#7 writing image sha256:66bf48d2d3b0a5aa74a9b79fa3836e77d676d3db70c8274a1c51010dbccf9493 done
+#7 naming to docker.io/ananth1501/simpleapplication 0.0s done
+#7 DONE 0.1s
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to Docker Hub)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withDockerRegistry
+$ docker login -u ananth1501 -p ******** https://index.docker.io/v1/
+WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+Login Succeeded
+[Pipeline] {
+[Pipeline] bat
+
+C:\ProgramData\Jenkins\.jenkins\workspace\proj1>docker push ananth1501/simpleapplication 
+Using default tag: latest
+The push refers to repository [docker.io/ananth1501/simpleapplication]
+7a9edb2e7b32: Preparing
+5f70bf18a086: Preparing
+43c9f8a1dd61: Preparing
+5f70bf18a086: Preparing
+bc05267c613b: Preparing
+4e5b554b7345: Preparing
+39cf0ac89a5a: Preparing
+f844dcf94898: Preparing
+3359bc3d7a6a: Preparing
+4b7c01ed0534: Preparing
+39cf0ac89a5a: Waiting
+f844dcf94898: Waiting
+4b7c01ed0534: Waiting
+3359bc3d7a6a: Waiting
+4e5b554b7345: Mounted from library/tomcat
+bc05267c613b: Mounted from library/tomcat
+43c9f8a1dd61: Mounted from library/tomcat
+5f70bf18a086: Mounted from library/tomcat
+7a9edb2e7b32: Pushed
+39cf0ac89a5a: Mounted from library/tomcat
+3359bc3d7a6a: Mounted from library/tomcat
+f844dcf94898: Mounted from library/tomcat
+4b7c01ed0534: Mounted from library/tomcat
+latest: digest: sha256:1e7a64d4f2b24daf27d5154454704d07790c826c99f18266a1cb586f61d8f873 size: 2409
+[Pipeline] }
+[Pipeline] // withDockerRegistry
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
